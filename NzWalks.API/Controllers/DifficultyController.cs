@@ -1,13 +1,8 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using NzWalks.API.Attributes;
 using NzWalks.API.Dtos.Difficulty;
-using NzWalks.API.Dtos.Region;
 using NzWalks.API.Services.Interfaces;
-using NzWalks.API.Utils;
 using NzWalks.API.Utils.Pagination;
 using NzWalks.MODEL;
 

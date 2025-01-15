@@ -1,6 +1,6 @@
 ﻿namespace NzWalks.API.Dtos.Walks
 {
-    public class WalkToCreateDto
+    public class WalkToUpdateDto
     {
         public string Name { get; set; }
         public string Description { get; set; }

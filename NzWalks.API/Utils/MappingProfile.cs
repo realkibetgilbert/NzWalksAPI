@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using NzWalks.API.Dtos.Difficulty;
 using NzWalks.API.Dtos.Region;
+using NzWalks.API.Dtos.Walks;
 using NzWalks.MODEL;
 
 namespace NzWalks.API.Utils
@@ -15,6 +16,9 @@ namespace NzWalks.API.Utils
             CreateMap<DifficultyToCreateDto, Difficulty>().ReverseMap();
             CreateMap<Difficulty, DiffIcultyToDisplayDto>().ReverseMap();
             CreateMap<DifficultyToUpdateDto, Difficulty>().ReverseMap();
+            CreateMap<WalkToCreateDto, Walk>().ReverseMap();
+            CreateMap<Walk, WalkToDisplayDto>().ReverseMap();
+            CreateMap<WalkToUpdateDto, Walk>().ReverseMap();
         }
     }
 }
