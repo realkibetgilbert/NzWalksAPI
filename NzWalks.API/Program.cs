@@ -12,6 +12,7 @@ builder.Services.AddDbContext<NzWalksDbContext>(options=>
 options.UseSqlServer(builder.Configuration.GetConnectionString("NzWalksConnectionString")
 ));
 builder.Services.AddScoped<IRegionRepository ,RegionRepository>();
+builder.Services.AddScoped<IDifficultyRepository ,DifficultyRepository>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
