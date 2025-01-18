@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NzWalks.API.Dtos.Auth;
+using NzWalks.API.Services.Interfaces;
 
 namespace NzWalks.API.Controllers
 {
@@ -10,12 +11,15 @@ namespace NzWalks.API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly ITokenRepository _tokenRepository;
 
-        public AuthController(UserManager<IdentityUser> userManager)
+        public AuthController(UserManager<IdentityUser> userManager, ITokenRepository tokenRepository)
         {
             _userManager = userManager;
+            _tokenRepository = tokenRepository;
         }
         [HttpPost]
+        [Route("Register")]
         public async Task<IActionResult> RegisterAsync([FromBody] RegisterRequestDto registerRequestDto)
         {
             var identityUser = new IdentityUser
@@ -36,6 +40,34 @@ namespace NzWalks.API.Controllers
             }
 
             return BadRequest();
+        }
+
+        [HttpPost]
+        [Route("Login")]
+        public async Task<IActionResult> LoginAsync([FromBody] LoginRequestDto loginRequestDto)
+        {
+            var user = await _userManager.FindByEmailAsync(loginRequestDto.UserName);
+
+            if (user != null)
+            {
+                var checkPassword = await _userManager.CheckPasswordAsync(user, loginRequestDto.Password);
+                if (checkPassword)
+                {
+                    //generate token....
+                    var roles = await _userManager.GetRolesAsync(user);
+
+                    if (roles != null)
+                    {
+                        string token = _tokenRepository.CreateToken(user, roles.ToList());
+                        var res = new LoginResponseDto { Token = token };
+                        return Ok(res);
+                    }
+
+                }
+
+            }
+
+            return BadRequest("User Not Found");
         }
     }
 }

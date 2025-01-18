@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NzWalks.API.Attributes;
 using NzWalks.API.Dtos.Difficulty;
@@ -10,6 +11,7 @@ namespace NzWalks.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class DifficultyController : ControllerBase
     {
         private readonly IDifficultyRepository _difficultyRepository;

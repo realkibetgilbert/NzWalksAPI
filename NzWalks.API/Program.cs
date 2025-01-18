@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using NzWalks.API.Data;
 using NzWalks.API.Services.Interfaces;
 using NzWalks.API.Services.SqlServerImplementations;
@@ -22,11 +23,45 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("NzWalksAuthConne
 builder.Services.AddScoped<IRegionRepository, RegionRepository>();
 builder.Services.AddScoped<IDifficultyRepository, DifficultyRepository>();
 builder.Services.AddScoped<IwalkRepository, WalkRepository >();
+builder.Services.AddScoped<ITokenRepository, TokenRepository >();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Version = "v1",
+        Title = "NzWalks API",
+        Description = "This API Provides Endpoints For NzWalks Operations",
+    });
+
+    options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = JwtBearerDefaults.AuthenticationScheme,
+    });
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+     {
+        new OpenApiSecurityScheme
+        {
+            Reference=new OpenApiReference
+            {
+                Type=ReferenceType.SecurityScheme,
+                Id=JwtBearerDefaults.AuthenticationScheme,
+            },
+            Scheme="Oauth2",
+            Name=JwtBearerDefaults.AuthenticationScheme,
+            In=ParameterLocation.Header,
+        },
+        new List<string>()
+    }
+    });
+});
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddSingleton<IUriService>(o =>
