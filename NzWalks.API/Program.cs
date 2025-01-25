@@ -1,18 +1,24 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NzWalks.API.Data;
+using NzWalks.API.Extensions;
 using NzWalks.API.Services.Interfaces;
 using NzWalks.API.Services.SqlServerImplementations;
 using NzWalks.API.Utils;
 using NzWalks.API.Utils.Pagination;
+using Serilog;
+using Serilog.Events;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+
+
+builder.ConfigureSerilogLogger();
 builder.Services.AddDbContext<NzWalksDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("NzWalksConnectionString")
 ));
@@ -22,10 +28,12 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("NzWalksAuthConne
 ));
 builder.Services.AddScoped<IRegionRepository, RegionRepository>();
 builder.Services.AddScoped<IDifficultyRepository, DifficultyRepository>();
-builder.Services.AddScoped<IwalkRepository, WalkRepository >();
-builder.Services.AddScoped<ITokenRepository, TokenRepository >();
+builder.Services.AddScoped<IwalkRepository, WalkRepository>();
+builder.Services.AddScoped<ITokenRepository, TokenRepository>();
+builder.Services.AddScoped<IImageRepository, ImageRepository>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddControllers();
+builder.Services.AddHttpContextAccessor();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
@@ -114,6 +122,12 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Images")),
+    RequestPath="/Images"
+
+});
 
 app.MapControllers();
 
