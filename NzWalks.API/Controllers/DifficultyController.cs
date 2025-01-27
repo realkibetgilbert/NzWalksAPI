@@ -11,7 +11,6 @@ namespace NzWalks.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class DifficultyController : ControllerBase
     {
         private readonly IDifficultyRepository _difficultyRepository;

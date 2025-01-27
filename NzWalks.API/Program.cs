@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NzWalks.API.Data;
 using NzWalks.API.Extensions;
+using NzWalks.API.Middlewares;
 using NzWalks.API.Services.Interfaces;
 using NzWalks.API.Services.SqlServerImplementations;
 using NzWalks.API.Utils;
@@ -117,15 +118,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Images")),
-    RequestPath="/Images"
+    RequestPath = "/Images"
 
 });
 
